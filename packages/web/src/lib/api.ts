@@ -63,6 +63,7 @@ function request<TResponse>(
 
   return axios({
     url: resolvedUrl,
+    timeout: 300_000,
     ...config,
     headers: {
       ...config.headers,
