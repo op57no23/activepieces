@@ -20,6 +20,9 @@ export class HttpError extends Error {
       })
     );
 
+    // Set an explicit name so the error type is preserved (e.g. by Sentry and
+    // other instrumentation) instead of defaulting to the inherited 'Error'.
+    this.name = 'HttpError';
     this.status = status;
     this.responseBody = responseBody;
   }

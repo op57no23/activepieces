@@ -12,7 +12,12 @@ export const exceptionHandler = {
         Sentry.init({
             dsn: sentryDsn,
             beforeSend: (event) => {
-                if (event?.exception?.values?.[0].type === 'AxiosError') {
+                // Errors from outbound HTTP calls are downstream failures (e.g. a
+                // bad credential returning 401), not server faults. `AxiosError`
+                // is already filtered, but pieces-common wraps it in `HttpError`
+                // before it propagates, which bypassed this filter — so drop both.
+                const type = event?.exception?.values?.[0]?.type
+                if (type === 'AxiosError' || type === 'HttpError') {
                     return null
                 }
                 const value = event?.exception?.values?.[0]?.value
